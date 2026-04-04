@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.gemini/
+03_planning/
+04_implementation/
+05_quality/
+06_debug/
+08_reports/
+tmp/
+*.png
+# We want to keep .agent, so we don't ignore it here.
