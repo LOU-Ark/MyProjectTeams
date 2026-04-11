@@ -1,0 +1,11 @@
+# Ignore all by default
+/*
+
+# Allow list
+!/.agent/
+!/README.md
+!/.gitignore
+
+# Still ignore temporary files inside .agent if any
+.agent/**/.DS_Store
+.agent/**/*.log

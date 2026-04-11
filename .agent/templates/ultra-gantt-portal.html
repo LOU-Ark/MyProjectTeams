@@ -1,0 +1,33 @@
+<!-- 
+  TEMPLATE: ultra-gantt-portal.html
+  40px Padding / 30px Radius / Hover Tooltip 規格準拠
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{{TITLE}}</title>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030408; --accent: #00f2fe; --grid: rgba(255, 255, 255, 0.05);
+            --bar-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            --outer-padding: 40px; --card-radius: 30px;
+        }
+        body { background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; margin: 0; padding: var(--outer-padding); overflow: hidden; height: calc(100vh - (var(--outer-padding) * 2)); display: flex; align-items: center; justify-content: center; }
+        #wrapper { width: 100%; height: 100%; background: rgba(255,255,255,0.015); border-radius: var(--card-radius); border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.8); }
+        /* (以下、共通スタイルを定義) */
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="header">{{SUBTITLE}}</div>
+        <div id="gantt-container" style="flex:1; position:relative;"></div>
+    </div>
+    <div id="tooltip"></div>
+    <script>
+        // Data and Initialization logic here
+    </script>
+</body>
+</html>
