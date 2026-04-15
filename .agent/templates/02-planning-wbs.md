@@ -3,25 +3,21 @@
 # 🗓️ Project Planning: WBS & Schedule
 
 ## 1. Work Breakdown Structure (WBS辞書)
-要件を満たすための具体的なタスク一覧です。開発時はこのIDを必ず参照します。
+VIS-004 基準に基づき定義されたタスク一覧です。
 
-| WBS ID | フェーズ | タスク名 | 詳細・備考 |
-| :--- | :--- | :--- | :--- |
-| TSK-01 | Phase 1 | {{タスク名}} | {{具体的な作業内容}} |
-| TSK-02 | Phase 1 | {{タスク名}} | {{具体的な作業内容}} |
-| TSK-03 | Phase 2 | {{タスク名}} | {{具体的な作業内容}} |
+| Phase | Task ID | Task Name | Description | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| {{フェーズ名}} | TSK-01 | {{タスク名}} | {{詳細説明}} | 0% |
+| {{フェーズ名}} | TSK-02 | {{タスク名}} | {{詳細説明}} | 0% |
 
-## 2. Gantt Chart (Mermaid スケジュール)
-以下のMermaidコードは、作業が進むごとに `done` や `active` タグが付与され、画像としてダッシュボードにレンダリングされます。
+## 2. 📈 進捗可視化 (Current Gantt Chart)
 
 ```mermaid
 gantt
-    title プロジェクト・スケジュール
+    title [Project Name] Schedule
     dateFormat  YYYY-MM-DD
-    section Phase 1: {{フェーズ名}}
-    {{タスク名}} : TSK-01, {{開始日}}, {{期間}}
-    {{タスク名}} : TSK-02, after TSK-01, {{期間}}
     
-    section Phase 2: {{フェーズ名}}
-    {{タスク名}} : TSK-03, after TSK-02, {{期間}}
+    section {{セクション名}}
+    {{タスク名}} :TSK-01, 2026-04-15, 1d
+    {{タスク名}} :TSK-02, after TSK-01, 2d
 ```
