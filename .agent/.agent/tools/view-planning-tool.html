@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Ultra Gantt - Premium Padded Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030408;
+            --accent: #00f2fe;
+            --grid: rgba(255, 255, 255, 0.05);
+            --bar-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            --today-line: #ff3344;
+            --card-bg: rgba(255, 255, 255, 0.015);
+            --outer-padding: 40px; /* 上下左右の余裕 */
+        }
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: var(--outer-padding); /* ここで全体に余裕を持たせる */
+            overflow: hidden;
+            height: calc(100vh - (var(--outer-padding) * 2));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #gantt-wrapper {
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border-radius: 30px; /* 画像のような大きな丸み */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .header {
+            padding: 20px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--grid);
+            background: rgba(0,0,0,0.3);
+        }
+        #gantt-container {
+            flex: 1;
+            position: relative;
+            user-select: none;
+        }
+        /* Header Dates */
+        .gantt-header {
+            display: flex;
+            background: rgba(0,0,0,0.5);
+            border-bottom: 1px solid var(--grid);
+            z-index: 10;
+        }
+        .day-label {
+            border-right: 1px solid var(--grid);
+            text-align: center;
+            font-size: 0.6rem;
+            color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .day-label.today { background: rgba(255, 51, 68, 0.1); color: var(--today-line); font-weight: 600; }
+
+        /* Rows */
+        .gantt-row {
+            display: flex;
+            border-bottom: 1px solid var(--grid);
+            position: relative;
+        }
+        .gantt-label-col {
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-right: 1px solid var(--grid);
+            font-size: 0.85rem;
+            color: #777;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .gantt-label-col.section {
+            color: var(--accent);
+            font-weight: 600;
+            background: rgba(30, 58, 138, 0.2);
+            text-transform: uppercase;
+        }
+        .gantt-chart-col { flex: 1; position: relative; }
+
+        .gantt-bar {
+            position: absolute;
+            background: var(--bar-gradient);
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3);
+            transition: transform 0.2s;
+        }
+        .gantt-bar:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+        /* Today Line */
+        .today-line {
+            position: absolute;
+            top: 0; bottom: 0; width: 1px;
+            background: var(--today-line);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Tooltip */
+        #tooltip {
+            position: fixed;
+            background: rgba(2, 3, 6, 0.98);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 2000;
+            max-width: 280px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            line-height: 1.6;
+            transition: opacity 0.15s;
+        }
+        #tooltip b { color: var(--accent); display: block; margin-bottom: 5px; font-size: 0.75rem; border-bottom: 1px solid rgba(0,242,254,0.3); padding-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div id="gantt-wrapper">
+        <div class="header">Aurora Ultra Gantt - Planning</div>
+        <div id="gantt-container"></div>
+    </div>
+    <div id="tooltip"></div>
+
+    <script>
+        const wbsDict = {
+            "TSK-01": "基盤構築とデザインシステム：配色、タイポグラフィ、透明度の定義完了。",
+            "TSK-02": "基本レイアウト実装：主要画面の骨組み作成、ナビゲーションの動作確認。",
+            "TSK-03": "メモのCRUD機能：データの作成・読み込み・更新・削除の全フローが稼働中。",
+            "TSK-04": "データ永続化：予期せぬ終了時でもデータを保護するRobustレイヤーの実装。",
+            "TSK-05": "検索エンジン：ミリ秒単位でのリアルタイムフィルタリング。",
+            "TSK-06": "Markdown/Theme：文書パースの最適化と、ダーク/ライトの完全調和。",
+            "TSK-07": "品質検証：エッジケースの解消と、レスポンシブ動作の最終合格エビデンス。",
+            "TSK-08": "プロジェクト納品：全ての成果物をパッケージングし、クライアントへ。完了。"
+        };
+
+        const rawData = `
+section Phase 1: Foundation
+基盤構築とスタイル定義 : done, TSK-01, 2026-04-01, 5d
+グローバル・ナビゲーション : done, TSK-02, after TSK-01, 4d
+データ統合レイヤー : done, TSK-03, 2026-04-06, 6d
+section Phase 2: Core Integration
+ダッシュボードUI : active, TSK-04, 2026-04-12, 7d
+メモ・機能統合 : active, TSK-05, after TSK-04, 8d
+習慣・ポモドーロ統合 : active, TSK-06, after TSK-05, 9d
+section Phase 3: Insights & Polish
+エージェント・インサイト : TSK-07, 2026-04-25, 6d
+デザイン・ブラッシュアップ : TSK-08, after TSK-07, 7d
+        `;
+
+        const container = document.getElementById('gantt-container');
+        const tooltip = document.getElementById('tooltip');
+
+        function renderPremiumGantt() {
+            container.innerHTML = '';
+            const items = [];
+            const tasksById = {};
+            let lastEnd = dayjs('2026-04-01');
+
+            rawData.split('\n').filter(l => l.trim()).forEach(l => {
+                const line = l.trim();
+                if (line.startsWith('section ')) {
+                    items.push({ type: 'section', name: line.replace('section ', '') });
+                } else if (line.includes(':')) {
+                    const [name, meta] = line.split(':').map(s => s.trim());
+                    const parts = meta.split(',').map(s => s.trim());
+                    let id = '', timing = '', dur = 1;
+                    parts.forEach(p => {
+                        if (p.startsWith('TSK-')) id = p;
+                        else if (p.startsWith('after ') || p.match(/^\d{4}/)) timing = p;
+                        else if (p.endsWith('d')) dur = parseInt(p);
+                    });
+                    const start = timing.startsWith('after ') ? (tasksById[timing.replace('after ', '')]?.end || lastEnd) : dayjs(timing || lastEnd);
+                    const end = start.add(dur, 'day');
+                    const task = { type: 'task', id, name, start, end };
+                    items.push(task); tasksById[id] = task; lastEnd = end;
+                }
+            });
+
+            const minDate = dayjs('2026-03-30');
+            const maxDate = dayjs('2026-05-15');
+            const totalDays = maxDate.diff(minDate, 'day');
+            
+            const sidebarW = 250;
+            const containerW = container.clientWidth;
+            const containerH = container.clientHeight;
+            
+            const dayW = (containerW - sidebarW) / totalDays;
+            const rowH = containerH / (items.length + 1);
+            const barH = rowH * 0.55;
+            const barTop = (rowH - barH) / 2;
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'gantt-header';
+            header.style.height = rowH + 'px';
+            header.innerHTML = `<div class="gantt-label-col" style="width:${sidebarW}px; padding:0"></div>`;
+            const today = dayjs();
+            for (let i = 0; i < totalDays; i++) {
+                const date = minDate.add(i, 'day');
+                const isToday = date.isSame(today, 'day');
+                const dDiv = document.createElement('div');
+                dDiv.className = `day-label ${isToday ? 'today' : ''}`;
+                dDiv.style.width = dayW + 'px';
+                dDiv.textContent = date.date();
+                header.appendChild(dDiv);
+            }
+            container.appendChild(header);
+
+            // Today Line
+            const todayX = today.diff(minDate, 'day') * dayW + sidebarW;
+            const tLine = document.createElement('div');
+            tLine.className = 'today-line';
+            tLine.style.left = todayX + 'px';
+            container.appendChild(tLine);
+
+            // Items
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'gantt-row';
+                row.style.height = rowH + 'px';
+
+                const label = document.createElement('div');
+                label.className = `gantt-label-col ${item.type}`;
+                label.style.width = sidebarW + 'px';
+                label.textContent = item.name;
+                row.appendChild(label);
+
+                const chart = document.createElement('div');
+                chart.className = 'gantt-chart-col';
+                
+                if (item.type === 'task') {
+                    const bar = document.createElement('div');
+                    bar.className = 'gantt-bar';
+                    const left = item.start.diff(minDate, 'day') * dayW;
+                    const width = (item.end.diff(item.start, 'day')) * dayW;
+                    bar.style.left = left + 'px';
+                    bar.style.width = width + 'px';
+                    bar.style.height = barH + 'px';
+                    bar.style.top = barTop + 'px';
+                    bar.textContent = item.id;
+
+                    bar.onmouseenter = (e) => {
+                        tooltip.style.opacity = 1;
+                        tooltip.innerHTML = `<b>${item.id}: ${item.name}</b>${wbsDict[item.id] || ""}<br><i>Term: ${item.start.format('MM/DD')} - ${item.end.format('MM/DD')}</i>`;
+                    };
+                    bar.onmousemove = (e) => {
+                        let x = e.clientX + 20;
+                        let y = e.clientY + 20;
+                        const tipRect = tooltip.getBoundingClientRect();
+                        if (x + tipRect.width > window.innerWidth - 40) x = e.clientX - tipRect.width - 20;
+                        if (y + tipRect.height > window.innerHeight - 40) y = e.clientY - tipRect.height - 20;
+                        tooltip.style.left = x + 'px';
+                        tooltip.style.top = y + 'px';
+                    };
+                    bar.onmouseleave = () => { tooltip.style.opacity = 0; };
+                    chart.appendChild(bar);
+                }
+                row.appendChild(chart);
+                container.appendChild(row);
+            });
+        }
+
+        window.addEventListener('resize', renderPremiumGantt);
+        window.onload = renderPremiumGantt;
+    </script>
+</body>
+</html>

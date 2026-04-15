@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Simple Gantt Test</title>
+    <!-- Mermaid.js CDN: 最も安定した公式ライブラリを使用 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: #0a0e14;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #00f2fe;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Project Gantt Chart Sample</h1>
+        <!-- Mermaid 記法をここに直接記述 -->
+        <pre class="mermaid">
+gantt
+    title Aurora Memo Development Schedule
+    dateFormat  YYYY-MM-DD
+    section Phase 1
+    Requirements Definition :done,    des1, 2026-04-01, 2026-04-03
+    UI Design               :active,  des2, 2026-04-04, 3d
+    section Phase 2
+    Implementation          :         des3, after des2, 5d
+    Testing & QA            :         des4, after des3, 5d
+        </pre>
+    </div>
+
+    <script>
+        // Mermaid の初期化
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            gantt: {
+                axisFormat: '%m/%d'
+            }
+        });
+    </script>
+</body>
+</html>

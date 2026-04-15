@@ -1,0 +1,66 @@
+/* Aurora Portal Style v3.7 (Integrated Dashboard Architecture) */
+:root {
+    --bg-deep: #02040a;
+    --sidebar-bg: rgba(13, 17, 23, 0.98);
+    --accent: #00f2fe;
+    --neon-green: #39ff14;
+    --neon-purple: #bc13fe;
+    --text-main: #e6edf3;
+    --text-dim: #8b949e;
+    --sidebar-w: 280px;
+}
+
+html, body { margin: 0; padding: 0; width: 100%; height: 100vh; overflow: hidden; background: var(--bg-deep); font-family: 'Outfit', sans-serif; color: var(--text-main); }
+#container { display: grid; grid-template-columns: var(--sidebar-w) 1fr; width: 100%; height: 100vh; }
+
+#sidebar { 
+    background: var(--sidebar-bg); backdrop-filter: blur(30px); border-right: 1px solid rgba(255,255,255,0.05);
+    padding: 30px 15px; display: flex; flex-direction: column; overflow-y: auto;
+}
+.sidebar-logo { color: #fff; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 45px; padding-left: 15px; }
+.nav-group { font-size: 0.6rem; color: #436cf1; font-weight: 800; letter-spacing: 1.5px; margin: 25px 0 10px 15px; text-transform: uppercase; }
+.nav-item { 
+    display: flex; align-items: center; padding: 12px 18px; border-radius: 12px; 
+    color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 500;
+    transition: 0.3s; cursor: pointer; margin-bottom: 4px;
+}
+.nav-item span { margin-right: 12px; font-size: 1.1rem; }
+.nav-item:hover { background: rgba(255,255,255,0.03); color: #fff; }
+.nav-item.active { 
+    background: rgba(0, 242, 254, 0.08); color: var(--accent); 
+    box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.2);
+}
+
+#main-scroll { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; scrollbar-gutter: stable; }
+.content-card { padding: 40px 60px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+#view { overflow-y: visible; }
+
+.h2-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-shrink: 0; }
+.fs-btn-inline { background: var(--accent); color: var(--bg-deep); border: none; padding: 6px 15px; border-radius: 6px; font-weight: 800; font-size: 0.6rem; cursor: pointer; }
+
+.gantt-root, .gantt-root-inline { 
+    display: grid; grid-template-columns: 280px 1fr; border: 1px solid rgba(255,255,255,0.05); 
+    border-radius: 12px; background: #0d1117; overflow-x: auto; min-height: 400px; margin-bottom: 40px;
+}
+.g-header { 
+    grid-column: 1 / -1; display: grid; grid-template-columns: 280px 1fr; 
+    height: 40px; background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.g-col-label { border-right: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+.g-row { display: grid; grid-template-columns: 280px 1fr; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.03); min-height: 0; }
+.g-label-cell { border-right: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; display: flex; align-items: center; }
+.g-plot-cell { position: relative; background-image: repeating-linear-gradient(90deg, transparent, transparent 49.5%, rgba(255,255,255,0.02) 50%); background-size: calc(100% / 7) 100%; }
+
+.g-bar-container { position: absolute; height: 14px; top: 50%; transform: translateY(-50%); border-radius: 4px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+.g-bar-human { height: 100%; border-radius: 4px; background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); opacity: 0.9; }
+.g-bar-ai { position: absolute; height: 100%; border-radius: 4px; background: var(--accent); opacity: 0.45; box-shadow: 0 0 15px var(--accent); top: 0; }
+
+.phase-row { background: rgba(0, 242, 254, 0.02); }
+.phase-text { color: var(--accent); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
+.task-text { color: #fff; font-size: 0.75rem; padding-left: 15px; }
+.tsk-id { font-family: monospace; color: var(--text-dim); margin-right: 8px; font-size: 0.7rem; }
+
+#fullscreen-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100vh; background: #02040a; z-index:2000; flex-direction:column; }
+.fs-top-bar { padding: 15px 40px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+#fs-gantt-target { flex: 1; overflow: hidden; display: flex; }
